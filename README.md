@@ -11,11 +11,17 @@ to a specific message.
 
 ## Setup
 
-1. Install dependencies (an editable install picks up the project metadata):
+This project uses [uv](https://docs.astral.sh/uv/). Install uv first if you
+don't have it:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+1. Install dependencies (uv creates a virtualenv and syncs from `uv.lock`):
 
    ```bash
-   python -m venv .venv && source .venv/bin/activate
-   pip install -e .
+   uv sync
    ```
 
 2. Configure secrets:
@@ -35,7 +41,7 @@ to a specific message.
 ## Syncing messages locally
 
 ```bash
-python main.py
+uv run main.py
 ```
 
 This loops over every channel in `channels.json` and writes
@@ -61,7 +67,7 @@ next pass. The wait is controlled by `DISCORD_SYNC_INTERVAL_SECONDS` in `.env`
 ## Serving the stored messages as an API
 
 ```bash
-python app.py            # or: flask --app app run
+uv run app.py            # or: uv run flask --app app run
 ```
 
 Endpoints:
@@ -99,6 +105,6 @@ curl -X POST http://127.0.0.1:5000/channels/general/send \
 Via the CLI:
 
 ```bash
-python discord_send_messages.py "hello channel" --channel-id 123456789012345678
-python discord_send_messages.py "replying!" --channel-id 123 --reply-to 456 --no-mention
+uv run discord_send_messages.py "hello channel" --channel-id 123456789012345678
+uv run discord_send_messages.py "replying!" --channel-id 123 --reply-to 456 --no-mention
 ```
