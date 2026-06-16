@@ -9,6 +9,10 @@ chatlogs/
 *.jsonl
 *.deprecated.csv
 
+# Event bus state + socket (local, never commit)
+.discord_event_bus_state.json
+discord_events.sock
+
 # Python
 __pycache__/
 *.py[cod]

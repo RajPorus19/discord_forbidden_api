@@ -108,3 +108,31 @@ Via the CLI:
 uv run discord_send_messages.py "hello channel" --channel-id 123456789012345678
 uv run discord_send_messages.py "replying!" --channel-id 123 --reply-to 456 --no-mention
 ```
+
+## Event Bus (real-time message events)
+
+The event bus daemon converts Discord REST API polling into a local
+event stream that **external tools can subscribe to** via Unix socket.
+
+This is useful when you want your own tools/services to react to Discord
+messages without polling the API yourself.
+
+```bash
+# 1. Enable in .env:
+DISCORD_EVENT_BUS_ENABLED=true
+
+# 2. Start the event bus daemon (runs alongside the syncer + API):
+uv run event_bus.py
+
+# 3. Subscribe from any tool:
+nc -U ~/.hermes/discord_events.sock
+```
+
+Each event is one JSON line:
+
+```json
+{"type":"message.received","id":"123","channel":{"id":"...","name":"général","type":"group"},"guild":{"id":"...","name":"My Server"},"author":{"id":"...","name":"zoomer","is_bot":false},"content":"hello","attachments":[],"reply_to":null}
+```
+
+The daemon uses **adaptive polling** (5 s when messages are flowing,
+60 s when quiet) and shares the same `channels.json` as `main.py`.
